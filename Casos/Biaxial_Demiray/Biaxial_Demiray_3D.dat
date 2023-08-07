@@ -1,0 +1,105 @@
+VULCAN: titulo del caso
+$       material: artery
+$       3D analysis
+START,NOINITIAL
+$START,INITIAL,NON_STANDARD,COMPONENTS_OF_STRESS_&_INT_VAR=6,0
+$------------------------------------------------CONTROL DATA
+CONTROL_DATA
+POSTPROCESS
+SOLVER,PARDISO,1,6
+SMOOTHING,DISCRETE
+END_CONTROL_DATA
+$------------------------------------------------PROBLEM DATA
+PROBLEM_DATA
+LARGE_DISPLACEMENTS_&_DEFORMATIONS
+DIMENSIONS: NPOIN=12560,NELEM=6084,NDIME=3,NNODE=8 \
+            NGAUS=8,NSETS=1,NMATS=1,NFUNC=1
+$LOCAL_COORDINATE_SYSTEM=22
+DEFORMATION_DEPENDENT_FACE_LOAD
+END_PROBLEM_DATA
+$------------------------------------------------GENERAL DATA
+GENERAL_DATA
+GEOMETRY,NONINTERPOLATE,40
+END_GEOMETRY
+$
+SETS
+ 1   1  30  4   1   8        ! NGRUP,IMATS,ITYPE,NTYPE,IRULE,IGAUS
+END_SETS
+$
+PROPERTIES
+MATERIAL=1,POLYMER,DELFINO_MODEL
+DENSITY,2
+7.85E-06   20.0    ! kg/mm3
+7.85E-06   40.0    !LLEGO A 3.55 EN EL ANTIGUO
+CONS1,2
+%Cons1%       25.0         ! Pa  material aorta adulto SANO
+%Cons1%        45.0
+CONS2,2
+%Cons2%        25.0         !
+%Con2%        45.0
+VOLUMETRIC_TERM_MODEL=3
+PENALTY_FOR_INCOMPRESSIBILITY,2
+%Penal%   20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion
+%Penal%   60.0
+REFERENCE_TEMPERATURE=25.0
+THERMAL_DILATATION,2
+0.0E-05     20.0
+0.0E-05     40.0
+TH_HD_FUNCTION,2
+1.0E+20     25.0     ! MPa (infinite => elastic behaviour)
+1.0E+20     45.0
+END_MATERIAL
+END_PROPERTIES
+END_GENERAL_DATA 
+$-----------------------------------------FIRST INTERVAL DATA
+INTERVAL_DATA: 30 1  !nstep,dtime = dura 1 segundo
+$.........................................FUNCTION DATA
+FUNCTION,NEW_FUNCTION
+F_NUMBER,1,1
+1 0.0 31.0 30.0 4.4! tipo,tinicial,tfinal,tconstante,factor
+END_FUNCTION
+$.........................................LOAD DATA
+$                                         for the first interval
+LOAD,NEW_LOAD
+$ PRINT_LOADS
+END_LOAD_DATA
+$.........................................BOUNDARY DATA
+$                                         for the first interval
+BOUNDARY_DATA,NEW_BOUNDARY,45
+END_BOUNDARY
+$.........................................STRATEGY DATA
+$                                         for the first interval
+STRATEGY,NEW_STRATEGY
+ ALGORITHM,UPDATE,2
+ LINESEARCH=ON
+ CONVERGENCE,TOTAL,200,0.001
+ OUTPUT,DISPLACEMENTS,1,0
+$ OUTPUT,G_STRESSES,1,0
+$ OUTPUT,N_STRESSES,1,0
+$ OUTPUT,G_INTERNAL,1,0
+$ OUTPUT,N_INTERNAL,1,0
+$ OUTPUT,REACTIONS,1,0
+$ OUTPUT,ALL,1,0
+$
+  PLOT
+$   Vertical displacement
+$    X:TIME
+$    Y:DISPLACEMENT,Y,1
+$  Vertical reaction
+$   X:TIME
+$   Y:FORCE,Y,17840
+$  Vertical displacement
+$   X:TIME
+$   Y:DISPLACEMENT,Y,4697
+$  Vertical reaction
+$   X:TIME
+$   Y:FORCE,Y,4697
+  END_PLOT
+$
+ POSTPROCESS,1,0
+END_STRATREGY_DATA
+END_INTERVAL_DATA
+$-----------------------------------------END 1 INTERVAL DATA
+STOP
+
+
