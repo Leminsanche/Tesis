@@ -178,7 +178,7 @@ class Errores():
             errores.append(error)
 
         if texto == True:
-            print('Residuo Promedio', round(np.mean(errores),10))
+            print('Residuo Promedio', np.mean(errores))
             
         return np.array(errores)
 
