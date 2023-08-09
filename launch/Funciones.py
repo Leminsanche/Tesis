@@ -131,30 +131,64 @@ def Combinaciones(Parametros_constates):
 
     return constantes
 
-
-def error_mesh(FEM,ROM, texto = True):
-    """
-    Funcion para calcular el error en los nodos entre una simulación FEM y ROM
-    Compara los valores en los nodos para una malla y calcula el error
-    error = |(y_teo - y-exp)/y_teo|*100
-    """
-    errores = []
-    for it,i in enumerate(FEM):
-        y_teo = FEM[it]
-        y_exp = ROM[it]
-
-        if y_teo == 0:
-            error = (abs((y_teo - y_exp)/(y_teo+1e-10)) )*100
-
-        else: 
-            error = (abs((y_teo - y_exp)/y_teo) )*100
+class Errores():
+    def __init__(self,FEM,ROM):
+        self.FEM = FEM
+        self.ROM = ROM 
         
-        errores.append(error)
+    def error_relativo(self,texto = True):
+        """
+        Funcion para calcular el error en los nodos entre una simulación FEM y ROM
+        Compara los valores en los nodos para una malla y calcula el error
+        error = |(y_teo - y-exp)/y_teo|*100
+        """
+        errores = []
+        for it,i in enumerate(self.FEM):
+            y_teo = abs(self.FEM[it])
+            y_exp = abs(self.ROM[it])
 
-    if texto == True:
-        print(print('Error Promedio', round(np.mean(errores),10),'%'))
-        
-    return np.array(errores) 
+            if y_teo == 0:
+                error = (abs((y_teo - y_exp)/(y_teo+1e-10)) )*100
+
+            else: 
+                error = (abs((y_teo - y_exp)/y_teo) )*100
+            
+            errores.append(error)
+
+        if texto == True:
+            print('Error Promedio', round(np.mean(errores),10),'%')
+            
+        return np.array(errores) 
+    
+
+    def Norma_L2(self,texto = True):
+        L2  = np.linalg.norm(self.FOM - self.ROM)
+        if texto == True:
+            print('Norma L2 Promedio', round(np.mean(L2),10))
+        return L2
+    
+    def residuo(self, texto = True):
+
+        errores = []
+        for it,i in enumerate(self.FEM):
+            y_teo = abs(self.FEM[it])
+            y_exp = abs(self.ROM[it])
+
+            error = abs((y_teo - y_exp))
+            errores.append(error)
+
+        if texto == True:
+            print('Residuo Promedio', round(np.mean(errores),10))
+            
+        return np.array(errores)
+
+
+
+
+
+
+
+
 
 
 def files_vulcan(Ubicacion_caso):

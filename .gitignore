@@ -1,4 +1,5 @@
 *.png
 *.pdf
 Codigo Antiguo/
-*npz
+*.npz
+*.odp
