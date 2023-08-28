@@ -1,0 +1,106 @@
+VULCAN:  Tensile test 3D uniaxial
+START: NOINITIAL
+$----------------------------------------------------------------CONTROL_DATA
+CONTROL_DATA
+$CPU_LIMIT 1.0E+20
+$DATA_LIMIT 11
+ SOLVER,PARDISO,1,2
+$ SOLVER,FRONTAL,1,4
+ SMOOTHING,DISCRETE
+POSTPROCESS
+END_CONTROL_DATA
+$----------------------------------------------------------------PROBLEM_DATA
+PROBLEM_DATA
+ LARGE_DISPLACEMENTS_&_DEFORMATIONS
+ DIMENSIONS: NPOIN=28440, NELEM=13924, NDIME=3, NNODE=8 \
+             NGAUS=8, NSETS=1, NMATS=1, NFUNC=1
+END_PROBLEM_DATA
+$--------------------------------------------------------------GENERAL_DATA
+GENERAL_DATA
+GEOMETRY,NONINTERPOLATE,40
+END_GEOMETRY
+$------------------------------------------------------------------
+SETS
+1  1  30  4  1  8  ! NGRUP,IMATS,ITYPE,NTYPE,IRULE,IGAUS
+END_SETS
+$------------------------------------------------------------------
+PROPERTIES
+MATERIAL=1,BIOLOGICAL_TISSUE,YEOH_MODEL
+DENSITY,2
+ 7.85E-06        25.0          ! kg/mm3
+ 7.85E-06        45.0
+CONS1,2
+%Cons1%     25.0          ! C1 [MPa]
+%Cons1%       45.0
+CONS2,2
+%Cons2%       25.0          ! C2 [MPa]
+%Cons2%       45.0
+CONS3,2
+%Cons3%     25.0          !C3 [MPa]
+%Cons3%      45.0
+VOLUMETRIC_TERM_MODEL=1
+PENALTY_FOR_INCOMPRESSIBILITY,2
+%Penal%  20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion
+%Penal%   60.0
+REFERENCE_TEMPERATURE=25.0
+THERMAL_DILATATION,2
+0.0E-05     20.0
+0.0E-05     40.0
+TH_HD_FUNCTION,2
+1.0E+20     25.0     ! MPa (infinite => elastic behaviour)
+1.0E+20     45.0
+END_MATERIAL
+END_PROPERTIES
+$-----------------------------------------------------------------------------
+$ TUNING_PARAMETERS
+$      1  0.0  19.0  1.0  1.0E+07
+$      1  0.0   0.0  1.0  1.0E+07
+$ END_TUNING_PARAMETERS
+$-----------------------------------------------------------------------------
+END_GENERAL_DATA
+$-----------------------------------------------------------------------------
+INTERVAL_DATA,100,1.0        ! nstep,dtime
+$-----------------------------------------------------------------------------
+FUNCTION,NEW_FUNCTION
+F_NUMBER,1,1
+1 0.0 101 100 20   ! tipo,tinicial,tfinal,tconstante,factor
+END_FUNCTION
+$-----------------------------------------------------------------------------
+LOAD,NEW_LOAD
+ PRINT_LOADS
+END_LOAD
+$-----------------------------------------------------------------------------
+BOUNDARY_DATA,NEW_BOUNDARY,45
+END_BOUNDARY
+$-----------------------------------------------------------------------------
+STRATEGY,NEW_STRATEGY
+ LINESEARCH=ON
+ ALGORITHM,UPDATE,2
+ CONVERGENCE,TOTAL,50,0.1
+ OUTPUT,DISPLACEMENTS,1,0
+ OUTPUT,N_STRESSES,1,0
+ OUTPUT,N_DEFORMATIONS,1,0
+ OUTPUT,N_INTERNAL,1,0
+PLOT
+ Relation STRESS_ZZ vs DISPLACEMENT_Z
+ X:DISPLACEMENT,Z,4
+ Y:STRESS,ZZ,1,4
+$ Relation INTER_1 vs DISPLACEMENT_Z
+$ X:DISPLACEMENT,Z,2
+$ Y:INTER,1,1,2
+$ Relation DISPLACEMENT_X vs DISPLACEMENT_Z
+$ X:DISPLACEMENT,Z,2
+$ Y:DISPLACEMENT,X,2
+$ Relation DISPLACEMENT_Y vs DISPLACEMENT_Z
+$ X:DISPLACEMENT,Z,2
+$ Y:DISPLACEMENT,Y,2
+!Horizontal displacement
+!X:TIME
+!Y:DISPLACEMENT,Z,4
+END_PLOT
+ POSTPROCESS,1,0
+END_STRATREGY_DATA
+$-----------------------------------------------------------------------------
+END_INTERVAL_DATA
+STOP
+Copyright @USACH-Depto de Ing Mecanica 2002 GiD to VULCAN TransLator Autor:Diego Armando Date  9/10/2002 Ultima Modificacion  0/00/0000 hecho en vi

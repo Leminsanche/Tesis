@@ -36,7 +36,7 @@ CONS1,2
 %Cons1%        45.0
 CONS2,2
 %Cons2%        25.0         !
-%Con2%        45.0
+%Cons2%        45.0
 VOLUMETRIC_TERM_MODEL=3
 PENALTY_FOR_INCOMPRESSIBILITY,2
 %Penal%   20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion

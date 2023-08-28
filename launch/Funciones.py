@@ -26,6 +26,11 @@ class Resultados_vulcan():
         results = vulcanData.getAllResults()
         return results['stress'][:,:,:]
      
+     def Fuerzas(self):
+        vulcanData = VulcanPosMesh(self.posFile,VulcanPosMesh.MECHANICAL)
+        results = vulcanData.getAllResults()
+        return results['reaction'][:,:,:]
+     
      def Resultado(self,name):
             vulcanData = VulcanPosMesh(self.posFile,VulcanPosMesh.MECHANICAL)
             results = vulcanData.getAllResults()
@@ -183,9 +188,13 @@ class Errores():
         return np.array(errores)
 
 
+def Trapecio_discreto(x,y):
+    I  = 0
 
-
-
+    for it in range(len(y)-1):
+        a,b,fa,fb = x[it] , x[it+1] , y[it] , y[it+1]
+        I =  I + (b-a) * ((fa+fb)/(2)) 
+    return I 
 
 
 

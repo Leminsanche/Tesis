@@ -12,7 +12,7 @@ END_CONTROL_DATA
 $------------------------------------------------PROBLEM DATA
 PROBLEM_DATA
 LARGE_DISPLACEMENTS_&_DEFORMATIONS
-DIMENSIONS: NPOIN=1331,NELEM=1000,NDIME=3,NNODE=8 \
+DIMENSIONS: NPOIN=28440,NELEM=13924,NDIME=3,NNODE=8 \
             NGAUS=8,NSETS=1,NMATS=1,NFUNC=1
 $LOCAL_COORDINATE_SYSTEM=22
 DEFORMATION_DEPENDENT_FACE_LOAD
@@ -35,12 +35,12 @@ CONS1,2
 %Cons1%       25.0         ! Pa  material aorta adulto SANO
 %Cons1%       45.0
 CONS2,2
-%Cons2%        25.0         !
+%Cons2%      25.0         !
 %Cons2%        45.0
 VOLUMETRIC_TERM_MODEL=3
 PENALTY_FOR_INCOMPRESSIBILITY,2
 %Penal%   20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion
-%Penal%   60.0
+%Penal%  60.0
 REFERENCE_TEMPERATURE=25.0
 THERMAL_DILATATION,2
 0.0E-05     20.0
@@ -52,11 +52,11 @@ END_MATERIAL
 END_PROPERTIES
 END_GENERAL_DATA 
 $-----------------------------------------FIRST INTERVAL DATA
-INTERVAL_DATA: 20 1  !nstep,dtime = dura 1 segundo
+INTERVAL_DATA: 100 1  !nstep,dtime = dura 1 segundo
 $.........................................FUNCTION DATA
 FUNCTION,NEW_FUNCTION
 F_NUMBER,1,1
-1 0.0 21 20 3! tipo,tinicial,tfinal,tconstante,factor
+1 0.0 101.0 100.0 20! tipo,tinicial,tfinal,tconstante,factor
 END_FUNCTION
 $.........................................LOAD DATA
 $                                         for the first interval

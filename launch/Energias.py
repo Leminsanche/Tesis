@@ -16,7 +16,7 @@ class Energia_deformacion():
         Invariantes = np.ones((len(C),3))
         for it, c in enumerate(C):
             I1 = np.trace(c)
-            I2 = 0.5 * (I1 - np.trace(np.matmul(c,c)) )
+            I2 = 0.5 * ( np.trace(c)**2 - np.trace(np.matmul(c,c)) )
             I3 = np.linalg.det(c)
 
             Invariantes[it,:] = np.array((I1,I2,I3))

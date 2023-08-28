@@ -221,7 +221,8 @@ def SVD_Modos_dask(Variable,INFO_ROM,Grafico_r_variable = False,r = 25):
 
     inicio0 = time.time()
     #Uv,Sv,Vv = np.linalg.svd(Variable,full_matrices=False)
-    Uv,Sv,Vv = da.linalg.svd_compressed(da.array(Variable),150)
+    #Uv,Sv,Vv = da.linalg.svd_compressed(da.array(Variable),150)
+    Uv,Sv,Vv = da.linalg.svd_compressed(da.array(Variable),r)
     Uv,Sv,Vv = np.array(Uv) , np.array(Sv) , np.array(Vv) 
     fin0 = time.time()
 
