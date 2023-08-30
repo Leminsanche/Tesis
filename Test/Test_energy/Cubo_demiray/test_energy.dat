@@ -1,0 +1,91 @@
+VULCAN: 3D, Caso uniaxial, Plasticidad, pequeñas deformaciones y pequeños desplazamientos
+START,NOINITAL
+$------------------------------------------------CONTROL DATA
+CONTROL_DATA
+ SOLVER,PARDISO,0,1                               ! Primer valor significa si la matriz tangente es simétrica (1) o no simetrica (0)
+ SMOOTHING,DISCRETE
+ POSTPROCESS
+END_CONTROL_DATA
+$------------------------------------------------PROBLEM DATA
+PROBLEM_DATA
+ LARGE_DISPLACEMENTS_&_DEFORMATIONS
+ ANISOTROPIC_MATERIAL_CONSTITUTIVE_MODELS
+ DIMENSIONS: NPOIN=8, NELEM=1, NDIME=3, NNODE=8 \
+             NGAUS=8, NSETS=1, NMATS=1, NFUNC=1 
+END_PROBLEM_DATA
+$------------------------------------------------GENERAL DATA
+GENERAL_DATA
+$------------------------------------------------GENERAL DATA
+$                4 y         3
+$                  +--------+            +--> u      Symmetry on
+$                 /|       /|           /|               "x"
+$                / |     7/ |          / |               "y"
+$               +--------+  |         +--> u             "z"
+$              8|  |1    |  | 2       |  |
+$               |  +-----|--+ x       |  +--> u
+$               | /      | /          | /  
+$               |/       |/           |/   
+$             5 +--------+ 6          +-->u
+$              z
+$
+ GEOMETRY,NONINTERPOLATE,40                               
+ END_GEOMETRY
+$
+ SETS
+  1  1  30  4  1  8  
+ END_SETS
+$
+PROPERTIES
+  MATERIAL=1,POLYMER,DELFINO_MODEL
+    DENSITY,2
+      7.85E-06   20.0    ! kg/mm3
+      7.85E-06   40.0    !LLEGO A 3.55 EN EL ANTIGUO
+    CONS1,2
+      %Cons1%       25.0         ! Pa  material aorta adulto SANO
+      %Cons1%       45.0
+    CONS2,2
+      %Cons2%        25.0         !
+      %Cons2%        45.0
+    VOLUMETRIC_TERM_MODEL=3
+    PENALTY_FOR_INCOMPRESSIBILITY,2
+      %Penal%   20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion
+      %Penal%   60.0
+    REFERENCE_TEMPERATURE=25.0
+    THERMAL_DILATATION,2
+      0.0E-05     20.0
+      0.0E-05     40.0
+    TH_HD_FUNCTION,2
+      1.0E+20     25.0     ! MPa (infinite => elastic behaviour)
+      1.0E+20     45.0
+  END_MATERIAL
+END_PROPERTIES
+END_GENERAL_DATA
+$-----------------------------------------FIRST INTERVAL DATA
+INTERVAL_DATA,1000,1.0 
+$.........................................FUNCTION DATA
+FUNCTION,NEW_FUNCTION
+ F_NUMBER,1,1
+  1, 0.0, 1000.1, 1000.0, 1 !tipo,tinicial,tfinal,tconstante,factor    
+END_FUNCTION
+$.........................................LOAD DATA
+LOAD,NEW_LOAD                                                         
+$ PRINT_LOADS
+END_LOAD_DATA
+$.........................................BOUNDARY DATA
+BOUNDARY_DATA,NEW_BOUNDARY,45
+END_BOUNDARY_DATA
+$.........................................STRATEGY DATA
+STRATEGY,NEW_STRATEGY
+ ALGORITHM,UPDATE,2          
+ CONVERGENCE,TOTAL,200,1.0e-13
+ RETURN_MAPPING_ALGORITHM: \
+     CONVERGENCE: 100, 1.0e-13
+ OUTPUT,ALL,1,0
+ POSTPROCESS,1,0             
+END_STRATREGY_DATA
+$
+$-----------------------------------------END FIRST INTERVAL DATA
+END_INTERVAL_DATA
+$
+$-----------------------------------------STOP ANALYSIS
+STOP

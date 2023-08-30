@@ -1,0 +1,140 @@
+VULCAN: Anillo a traccion en miografo
+$       material: artery
+$       3D analysis
+START,NOINITIAL
+$START,INITIAL,NON_STANDARD,COMPONENTS_OF_STRESS_&_INT_VAR=6,0
+$------------------------------------------------CONTROL DATA
+CONTROL_DATA
+POSTPROCESS
+SOLVER,PARDISO,1,8
+SMOOTHING,DISCRETE
+END_CONTROL_DATA
+$------------------------------------------------PROBLEM DATA
+PROBLEM_DATA
+LARGE_DISPLACEMENTS_&_DEFORMATIONS
+$DEFORMATION_DEPENDENT_FACE_LOAD
+ANISOTROPIC_MATERIAL_CONSTITUTIVE_MODELS
+DIMENSIONS: NPOIN=8,NELEM=1,NDIME=3,NNODE=8 \
+            NGAUS=8,NSETS=1,NMATS=1,NFUNC=2
+END_PROBLEM_DATA
+$------------------------------------------------GENERAL DATA
+$                4 y         3
+$                  +--------+            +--> u      Symmetry on
+$                 /|       /|           /|               "x"
+$                / |     7/ |          / |               "y"
+$               +--------+  |         +--> u             "z"
+$              8|  |1    |  | 2       |  |
+$               |  +-----|--+ x       |  +--> u
+$               | /      | /          | /
+$               |/       |/           |/
+$             5 +--------+ 6          +-->u
+$              z
+GENERAL_DATA
+GEOMETRY,NONINTERPOLATE,40
+END_GEOMETRY
+$
+SETS
+ 1   1  30  4   1   8        ! NGRUP,IMATS,ITYPE,NTYPE,IRULE,IGAUS
+END_SETS
+$
+PROPERTIES
+MATERIAL=1,BIOLOGICAL_TISSUE,HOLZ2
+DENSITY,2
+    0.1 25.0           ! kg/mm3
+    0.1 45.0
+CONS1,2
+    %Cons1% 25.0           ! c [MPa] o 2*mu
+    %Cons1% 45.0
+CONS2,2
+    %Cons2% 25.0 ! k1 [MPa]
+    %Cons2% 45.0
+CONS3,2
+    %Cons3% 25.0 ! k2 [-]
+    %Cons3% 45.0
+CONS4,2
+    %Cons4%  25.0          ! 0 < kappa_1 < 0.5
+    %Cons4%  45.0
+CONS5,2
+    %Cons5%  25.0          ! 0 < kappa_2 < 1
+    %Cons5%  45.0
+VOLUMETRIC_TERM_MODEL=3
+PENALTY_FOR_INCOMPRESSIBILITY,2
+    %Penal%   20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion
+    %Penal%   60.0
+REFERENCE_TEMPERATURE=25.0
+THERMAL_DILATATION,2
+    0.0E-05     20.0
+    0.0E-05     40.0
+TH_HD_FUNCTION,2
+    1.0E+20     25.0     ! MPa (infinite => elastic behaviour)
+    1.0E+20     45.0
+END_MATERIAL
+MATERIAL_SYSTEM_OF_COORDINATES
+1
+1 0 1 0 0 0 1000.0 %angulo%
+END_MATERIAL_SYSTEM_OF_COORDINATES
+END_PROPERTIES
+END_GENERAL_DATA
+$-----------------------------------------FIRST INTERVAL DATA
+INTERVAL_DATA: 1000 1   !nstep,dtime (4000, 0.1)
+$INTERVAL_DATA: 1 100   !nstep,dtime
+$.........................................FUNCTION DATA
+FUNCTION,NEW_FUNCTION
+F_NUMBER,1,1
+    1 0.0 1001 1000  1.0 ! tipo,tinicial,tfinal,tconstante,factor
+END_FUNCTION
+$.........................................LOAD DATA
+$                                         for the first interval
+LOAD,NEW_LOAD
+$
+END_LOAD_DATA
+$.........................................BOUNDARY DATA
+$                                         for the first interval
+BOUNDARY_DATA,NEW_BOUNDARY,45
+END_BOUNDARY
+$.........................................STRATEGY DATA
+$                                         for the first interval
+STRATEGY,NEW_STRATEGY
+ ALGORITHM,UPDATE,2
+ LINESEARCH=ON
+ CONVERGENCE,TOTAL,200, 0.01 !1.0e-7
+ OUTPUT,DISPLACEMENTS,1,0
+ OUTPUT,N_STRESSES,1,0
+ OUTPUT,N_PRI,1,0
+ OUTPUT,N_DEFORMATIONS,1,0
+ OUTPUT,N_DEP,1,0
+$ OUTPUT,N_INTERNAL,1,0
+ OUTPUT,G_STRESSES,1,0
+ OUTPUT,G_PRI,1,0
+ OUTPUT,G_INT,1,0
+$ OUTPUT,ALL,1,0
+$ STEPPING,NEWMARK
+$ OUTPUT,N_STRESSES,1,0
+$ OUTPUT,G_INTERNAL,1,0
+$ OUTPUT,N_INTERNAL,1,0
+$ OUTPUT,REACTIONS,1,0
+$ OUTPUT,ALL,1,0
+$
+  PLOT
+$   Vertical displacement
+$    X:DISPLACEMENT,Y,7
+$    Y:DISPLACEMENT,Z,7
+$   Stress
+$    X:DISPLACEMENT,X,7
+$    Y:STRESS,XX,1,1
+$  Vertical reaction
+$   X:TIME
+$   Y:FORCE,Y,17840
+$  Vertical displacement
+$   X:TIME
+$   Y:DISPLACEMENT,Y,4697
+$  Vertical reaction
+$   X:TIME
+$   Y:FORCE,Y,4697
+  END_PLOT
+$
+ POSTPROCESS,1,0
+END_STRATREGY_DATA
+END_INTERVAL_DATA
+$-----------------------------------------END 1 INTERVAL DATA
+STOP
