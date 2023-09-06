@@ -30,6 +30,10 @@ class Vulcan():
         gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
         print('Simulacion Finalizada')
 
+        if verbose == True:
+            print('J global: ', gradientes_deformacion [1] )
+
+
         dat_out = Nombre_salida + '.dat' 
         fix_out = Nombre_salida + '.fix'
         geo_out = Nombre_salida + '.geo'
@@ -63,6 +67,11 @@ class Vulcan():
         print('Numero de pasos simulados: ', len(disp))
         gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
         print('Simulacion Finalizada')
+
+        if verbose == True:
+            print('J global: ', gradientes_deformacion [1])
+
+
 
         dat_out = Nombre_salida + '.dat' 
         fix_out = Nombre_salida + '.fix'
@@ -102,6 +111,10 @@ class Vulcan():
         gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
         print('Simulacion Finalizada')
 
+        if verbose == True:
+            print('J global: ', gradientes_deformacion [1])
+
+
         dat_out = Nombre_salida + '.dat' 
         fix_out = Nombre_salida + '.fix'
         geo_out = Nombre_salida + '.geo'
@@ -139,6 +152,10 @@ class Vulcan():
         print('Numero de pasos simulados: ', len(disp))
         gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
         print('Simulacion Finalizada')
+
+        if verbose == True:
+            print('J global: ', gradientes_deformacion [1])
+
 
         dat_out = Nombre_salida + '.dat' 
         fix_out = Nombre_salida + '.fix'
@@ -195,7 +212,7 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Cubo_demiray(self,a,b,penal = 1000,verbose = True):
+    def Cubo_demiray(self,a,b,penal = 10000,verbose = True):
         print('##### Modelo Demiray ####')
         ubicacion = self.ubicacion_casos + 'cubochico/'
         #print(ubicacion)

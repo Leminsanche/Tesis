@@ -31,6 +31,11 @@ class Resultados_vulcan():
         results = vulcanData.getAllResults()
         return results['reaction'][:,:,:]
      
+     def incompresibilidad(self):
+        vulcanData = VulcanPosMesh(self.posFile,VulcanPosMesh.MECHANICAL)
+        results = vulcanData.getAllResults()
+        return results['J'][:,:,:]
+     
      def Resultado(self,name):
             vulcanData = VulcanPosMesh(self.posFile,VulcanPosMesh.MECHANICAL)
             results = vulcanData.getAllResults()

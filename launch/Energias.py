@@ -4,6 +4,8 @@ class Energia_deformacion():
     def __init__(self,gradiente):
 
         self.gradiente = gradiente.reshape((int(len(gradiente)/9),3,3))
+        #determinantes = np.linalg.det(self.gradiente)
+
 
     def Cauchy_green_left(self):
         
@@ -52,7 +54,8 @@ class Energia_deformacion():
 
         for it,i in enumerate(invariantes):
             I1 ,  I2 , I3 = i[0], i[1], i[2] 
-            energia  =  (c1/c2) * (np.e**(c2*0.5*(I1-3)) - 1 )
+            aux = I3**(-1/3)
+            energia  =  (c1/c2) * (np.e**(c2*0.5*(I1*aux-3)) - 1 )
             energy[it]  =  energia
     
         return energy

@@ -260,10 +260,84 @@ class Hexs:
         return np.matmul(inv_der_x_xi,self.der_N_fun(xi).T).transpose(0,2,1)
 
     def f(self, x_n):  # gradiente de deformacion -- 7.5
-        
+        #print("disp", x_n)
         x = self._get_nodes(x_n)
         Fs = []
         
         F = np.einsum('eai,exaj->exij', x, self.der_N_X_esquinas)
     
+        #print("test", F)
         return F
+    
+
+
+class energy(Hexs):
+
+    def __init__(self, nodes, conn):
+        self.conn = conn
+        self.nodes = nodes[conn]
+        self.nnodes = 8
+
+        #print(f'conn: {conn}')
+
+        puntos_iso = np.array([[-1,-1,-1],
+                               [ 1,-1,-1],
+                               [ 1, 1,-1],
+                               [-1, 1,-1],
+                               [-1,-1, 1],
+                               [ 1,-1, 1],
+                               [ 1, 1, 1],
+                               [-1, 1, 1] ])
+        
+
+        self.gauss_points = np.array([[-1/3**0.5, -1/3**0.5, -1/3**0.5],
+                                      [ 1/3**0.5, -1/3**0.5, -1/3**0.5],
+                                      [ 1/3**0.5,  1/3**0.5, -1/3**0.5],
+                                      [-1/3**0.5,  1/3**0.5, -1/3**0.5],
+                                      [-1/3**0.5, -1/3**0.5,  1/3**0.5],
+                                      [ 1/3**0.5, -1/3**0.5,  1/3**0.5],
+                                      [ 1/3**0.5,  1/3**0.5,  1/3**0.5],
+                                      [-1/3**0.5,  1/3**0.5,  1/3**0.5],
+                                      ])
+        
+        self.der_N_X_gp = [self.der_N_X(i) for i in self.gauss_points]
+
+        self.der_N_X_gp = np.array(self.der_N_X_gp).transpose((1,0,2,3))
+
+    def Delphino(self,F,c1,c2):
+        F_T = np.moveaxis(F,-1,-2)
+        C = np.matmul(F_T,F)
+        I1,I2,I3 = np.einsum('...ii',C), 0.5 * (np.einsum('...ii',C)**2 - np.einsum('...ii',np.matmul(C,C))), np.linalg.det(C)
+        aux = I3**(-1/3)
+        energia  =  (c1/c2) * (np.e**(c2*0.5*(I1*aux-3)) - 1 )    
+        #print(energia)    
+        return energia
+    
+    def f_gauss(self, x_n):  # gradiente de deformacion -- 7.5
+        #print("disp", x_n)
+        x = self._get_nodes(x_n)
+        #print(f"xn: {x}")
+        #print(self.der_N_X_gp)
+        F = np.einsum('eai,exaj->exij', x, self.der_N_X_gp)
+        #print("test", F)
+        return F
+
+
+    def Delphino_E(self,x_n,c1,c2):
+        # x_n nuevas coordenadas
+        #print(x_n)
+        x = self._get_nodes(x_n)
+        F = self.f_gauss(x_n)
+        # print(F.shape)
+        temp = self.Delphino(F,c1,c2)
+        # print(temp.shape)
+        micro = []
+        for it, gp in enumerate(self.gauss_points):
+            aux = np.linalg.det(self.der_x_xi(x, gp))
+            micro.append(aux)
+        e_t = np.dot(temp,np.array(micro))
+        # print(np.array(micro).sum())
+        # # print(e_t)
+        # #print(micro)
+        # print(x_n)
+        return e_t
