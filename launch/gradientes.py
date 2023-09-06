@@ -100,6 +100,38 @@ def Gradientes_nodales_Vulcan(file,disp):
 
 
 
+def Energia_Total(file, disp,a,b):
+    """
+    Funcion realizada la energia en cada elemento
+    input
+    
+    """
+
+    mesh = pv.read(file)
+    mesh.clear_data()
+    COO = mesh.points
+    #print(COO)
+    desplazamientos = disp
+    num_steps , num_nodos, num_dim = disp.shape
+    COO_def = [] ## Coordenadas deformadas
+
+    for i in range(num_steps):
+        desp = desplazamientos[i]
+        COO_n = COO + desp 
+        COO_def.append(COO_n)
+    # print('######################')
+    # print(mesh.cells_dict[12])
+    temp_con = [[0, 1 ,2, 3, 4, 5, 6, 7]]
+    e_t = []
+    for j in range(num_steps):
+        e_t.append(energy(COO,mesh.cells_dict[12]).Delphino_E(COO_def[j],a,b))
+        # e_t.append(energy(COO,temp_con).Delphino_E(COO_def[j],a,b))
+
+    return e_t 
+
+
+
+
 class Hex:
     def __init__(self, nodes, conn):
         self.conn = conn
