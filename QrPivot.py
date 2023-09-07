@@ -30,20 +30,20 @@ indices_base = list(np.array(puntos_imp)[list(a.permutationMatrix[0])])
 mesh_samples = np.zeros(A.shape[0])
 
 C = np.zeros((A.shape[1],A.shape[0]))
+C[np.arange(len(indices_base)), indices_base] = 1
 
-jt = 0
+
 for it  in range(A.shape[0]):
     if it in indices_base:
         mesh_samples[it] = 1
-        C[jt,it] = 1
-        jt = jt+1
+
 
 
 
 texto_indices = Direccion_Salida + 'indices_base' + '.txt'
 texto_paraview = Direccion_Salida + 'indices_base' + '.vtk'
-texto = Direccion_Salida + Nombre_Salida + '.npz'
+texto = Direccion_Salida + Nombre_Salida + '.txt'
 mesh['Samples'] = mesh_samples.reshape((-1,3))
-np.savez_compressed(texto,C)
+np.savetxt(texto,C)
 np.savetxt(texto_indices, np.array(indices_base) )
 mesh.save(texto_paraview)
