@@ -28,6 +28,8 @@ class Vulcan():
 
         print('Numero de pasos simulados: ', len(disp))
         gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        print('J global: ', gradientes_deformacion[1])
+        
         print('Simulacion Finalizada')
 
         dat_out = Nombre_salida + '.dat' 
@@ -100,6 +102,7 @@ class Vulcan():
         disp, stress = get_results(caso1.pathToPos())
         print('Numero de pasos simulados: ', len(disp))
         gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        print('J global: ', gradientes_deformacion [1])
         print('Simulacion Finalizada')
 
         dat_out = Nombre_salida + '.dat' 

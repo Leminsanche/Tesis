@@ -12,10 +12,12 @@ from scipy import interpolate
 from launch.Energias import *
 
 
-Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_demiray/'
-Nombre_salida = 'Test_energy'
+Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_Holza/'
+Nombre_salida = 'Test_energy_holza'
 
-param = {'Cons1': 30.0E-3,'Cons2': 3.77,'Penal': 30 }
+param = {'Cons1': 16.25,'Cons2': 24.18,'Cons3': 0.233,
+         'Cons4': 0.4970354337897983,'Cons5': 0.7368818088805228,
+         'angulo': 2.633605607690877e+01,'Penal': 1.0E+6 }
 
 
 
@@ -25,9 +27,11 @@ caso1 = VulcanHandler([dat,geo,fix],Nombre_salida)
 caso1.run(param)
 disp, stress = get_results(caso1.pathToPos())
 fuerzas = Resultados_vulcan(caso1.pathToPos()).Fuerzas()
+print(disp)
 print('Numero de pasos simulados: ', len(disp))
 gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
 
+print('J global: ', gradientes_deformacion [1] )
 dat_out = Nombre_salida + '.dat' 
 fix_out = Nombre_salida + '.fix'
 geo_out = Nombre_salida + '.geo'
@@ -68,7 +72,7 @@ energia_cell = np.array(energia_cell)#.reshape((-1,1))
 volumenes_cell = np.array(volumenes_cell)#.reshape((1,-1))
 
 print('Energía de Deformacion')
-print(volumenes_cell)
+#print(volumenes_cell)
 print(np.dot(volumenes_cell, energia_cell))
 # Cambiar el volumen orgiinal al actual
 
@@ -96,8 +100,8 @@ for it,i in  enumerate(mesh.points):
 
 Fuerza_extremo1 = np.sum(fuerzas[:,Punto_extremo1,-1], axis = 1)
 desplazamientos1 = disp[:,Punto_extremo1[0],-1]
-print(desplazamientos1)
-print(Fuerza_extremo1 )
+#print(desplazamientos1)
+#print(Fuerza_extremo1 )
 ############################################################### Area Bajo la curva ################################################
 
 

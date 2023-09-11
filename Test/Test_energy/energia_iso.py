@@ -85,19 +85,18 @@ def Gradientes_nodales_Vulcan(file,disp):
     Gradientes_step = np.zeros((len(COO), 3, 3, len(COO_def)))
     # Gradientes_step = np.zeros((len(COO)*9,len(COO_def)))
 
-    #determinantes = [] ################################## FLAG
+    determinantes = [] ################################## FLAG
 
     for istep, iCOO_def  in enumerate(COO_def):
         #print('########################################## Paso, istep ##########################################')
         Gradientes_step[:,:,:,istep] = Gradientes_nodales(COO,iCOO_def, mesh.cells_dict[12], list_for_f)
-        #determinantes.append(np.linalg.det(Gradientes_step[:,:,:,istep])) ########################################### FLAG
+        determinantes.append(np.linalg.det(Gradientes_step[:,:,:,istep])) ########################################### FLAG
 
     #print('Promedio J global = ',np.mean(np.array(determinantes)))  ################################ FLAG
-    J_global  = np.mean(np.array(np.linalg.det(Gradientes_step[:,:,:,-1])))
+    J_global  = np.mean(np.array(determinantes))
     Gradientes_step = Gradientes_step.reshape(((len(COO)*9,len(COO_def))))
         
     return Gradientes_step, J_global
-
 
 
 def Energia_Total(file, disp,a,b):
@@ -128,8 +127,6 @@ def Energia_Total(file, disp,a,b):
         # e_t.append(energy(COO,temp_con).Delphino_E(COO_def[j],a,b))
 
     return e_t 
-
-
 
 
 class Hex:
@@ -283,7 +280,7 @@ class Hexs:
         return out
 
     def der_x_xi(self, x, xi):  # 7.11a
-        return np.einsum('ai,aj', x, self.der_N_fun(xi))
+        return np.einsum('...ai,aj', x, self.der_N_fun(xi))
 
     def der_N_x(self, x, xi):  # 7.11b
         temp = self.der_x_xi(x, xi).transpose(0,2,1)
@@ -294,14 +291,12 @@ class Hexs:
     def f(self, x_n):  # gradiente de deformacion -- 7.5
         #print("disp", x_n)
         x = self._get_nodes(x_n)
-        Fs = []
         
         F = np.einsum('eai,exaj->exij', x, self.der_N_X_esquinas)
     
         #print("test", F)
         return F
     
-
 
 class energy(Hexs):
 
@@ -373,3 +368,4 @@ class energy(Hexs):
         # #print(micro)
         # print(x_n)
         return e_t
+

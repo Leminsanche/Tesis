@@ -52,11 +52,11 @@ END_MATERIAL
 END_PROPERTIES
 END_GENERAL_DATA 
 $-----------------------------------------FIRST INTERVAL DATA
-INTERVAL_DATA: 100 1  !nstep,dtime = dura 1 segundo
+INTERVAL_DATA: 1500 1  !nstep,dtime = dura 1 segundo
 $.........................................FUNCTION DATA
 FUNCTION,NEW_FUNCTION
 F_NUMBER,1,1
-1 0.0 101.0 100.0 20! tipo,tinicial,tfinal,tconstante,factor
+1 0.0 1501 1500 20! tipo,tinicial,tfinal,tconstante,factor
 END_FUNCTION
 $.........................................LOAD DATA
 $                                         for the first interval

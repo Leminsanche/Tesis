@@ -81,7 +81,7 @@ $INTERVAL_DATA: 1 100   !nstep,dtime
 $.........................................FUNCTION DATA
 FUNCTION,NEW_FUNCTION
 F_NUMBER,1,1
-    1 0.0 1001 1000  1.0 ! tipo,tinicial,tfinal,tconstante,factor
+    1 0.0 1001 1000  1 ! tipo,tinicial,tfinal,tconstante,factor
 END_FUNCTION
 $.........................................LOAD DATA
 $                                         for the first interval

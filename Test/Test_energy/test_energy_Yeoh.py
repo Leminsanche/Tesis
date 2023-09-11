@@ -10,12 +10,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import interpolate
 from launch.Energias import *
+import random
 
+Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_Yeoh/'
+Nombre_salida = 'Test_energy_yeoh'
 
-Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_demiray/'
-Nombre_salida = 'Test_energy'
+a,b,c = 0.018412852746797336, 0.04638435127243134, 0.004321486477620494
 
-param = {'Cons1': 30.0E-3,'Cons2': 3.77,'Penal': 30 }
+param = {'Cons1': a,'Cons2': b,'Cons3': c,'Penal': 10000*a }
 
 
 
@@ -44,7 +46,7 @@ Borrar_file([dat_out,fix_out,geo_out])
 mesh = pv.read(file_msh)
 mesh.clear_data()
 
-energia  =Energia_deformacion(gradientes_deformacion[0][:,-1]).Demiray(30.0E-3,3.77)
+energia  =Energia_deformacion(gradientes_deformacion[0][:,-1]).Yeoh(a,b,c)
 
 COO = mesh.points
 energia_cell = []

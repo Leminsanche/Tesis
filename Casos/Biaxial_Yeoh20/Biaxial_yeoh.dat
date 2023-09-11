@@ -59,11 +59,11 @@ $ END_TUNING_PARAMETERS
 $-----------------------------------------------------------------------------
 END_GENERAL_DATA
 $-----------------------------------------------------------------------------
-INTERVAL_DATA,100,1.0        ! nstep,dtime
+INTERVAL_DATA,1500,1.0        ! nstep,dtime
 $-----------------------------------------------------------------------------
 FUNCTION,NEW_FUNCTION
 F_NUMBER,1,1
-1 0.0 101 100 20   ! tipo,tinicial,tfinal,tconstante,factor
+1 0.0 1501 1500 20   ! tipo,tinicial,tfinal,tconstante,factor
 END_FUNCTION
 $-----------------------------------------------------------------------------
 LOAD,NEW_LOAD

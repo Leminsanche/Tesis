@@ -1,4 +1,4 @@
-VULCAN: titulo del caso
+VULCAN: Anillo a traccion en miografo
 $       material: artery
 $       3D analysis
 START,NOINITIAL
@@ -6,18 +6,29 @@ $START,INITIAL,NON_STANDARD,COMPONENTS_OF_STRESS_&_INT_VAR=6,0
 $------------------------------------------------CONTROL DATA
 CONTROL_DATA
 POSTPROCESS
-SOLVER,PARDISO,1,6
+SOLVER,PARDISO,1,8
 SMOOTHING,DISCRETE
 END_CONTROL_DATA
 $------------------------------------------------PROBLEM DATA
 PROBLEM_DATA
 LARGE_DISPLACEMENTS_&_DEFORMATIONS
-DIMENSIONS: NPOIN=12560,NELEM=6084,NDIME=3,NNODE=8 \
-            NGAUS=8,NSETS=1,NMATS=1,NFUNC=1
-$LOCAL_COORDINATE_SYSTEM=22
-DEFORMATION_DEPENDENT_FACE_LOAD
+$DEFORMATION_DEPENDENT_FACE_LOAD
+ANISOTROPIC_MATERIAL_CONSTITUTIVE_MODELS
+DIMENSIONS: NPOIN=8,NELEM=1,NDIME=3,NNODE=8 \
+            NGAUS=8,NSETS=1,NMATS=1,NFUNC=2
 END_PROBLEM_DATA
 $------------------------------------------------GENERAL DATA
+$                4 y         3
+$                  +--------+            +--> u      Symmetry on
+$                 /|       /|           /|               "x"
+$                / |     7/ |          / |               "y"
+$               +--------+  |         +--> u             "z"
+$              8|  |1    |  | 2       |  |
+$               |  +-----|--+ x       |  +--> u
+$               | /      | /          | /
+$               |/       |/           |/
+$             5 +--------+ 6          +-->u
+$              z
 GENERAL_DATA
 GEOMETRY,NONINTERPOLATE,40
 END_GEOMETRY
@@ -27,17 +38,20 @@ SETS
 END_SETS
 $
 PROPERTIES
-MATERIAL=1,POLYMER,DELFINO_MODEL
+MATERIAL=1,BIOLOGICAL_TISSUE,YEOH_MODEL
 DENSITY,2
-7.85E-06   20.0    ! kg/mm3
-7.85E-06   40.0    !LLEGO A 3.55 EN EL ANTIGUO
+ 7.85E-06        25.0          ! kg/mm3
+ 7.85E-06        45.0
 CONS1,2
-%Cons1%       25.0         ! Pa  material aorta adulto SANO
-%Cons1%        45.0
+%Cons1%     25.0          ! C1 [MPa]
+%Cons1%       45.0
 CONS2,2
-%Cons2%        25.0         !
-%Cons2%        45.0
-VOLUMETRIC_TERM_MODEL=3
+%Cons2%       25.0          ! C2 [MPa]
+%Cons2%       45.0
+CONS3,2
+%Cons3%     25.0          !C3 [MPa]
+%Cons3%      45.0
+VOLUMETRIC_TERM_MODEL=1
 PENALTY_FOR_INCOMPRESSIBILITY,2
 %Penal%   20.0 ! Pa            !    1.00E+07 OK  este es el de la solucion
 %Penal%   60.0
@@ -50,18 +64,19 @@ TH_HD_FUNCTION,2
 1.0E+20     45.0
 END_MATERIAL
 END_PROPERTIES
-END_GENERAL_DATA 
+END_GENERAL_DATA
 $-----------------------------------------FIRST INTERVAL DATA
-INTERVAL_DATA: 50 1  !nstep,dtime = dura 1 segundo
+INTERVAL_DATA: 1000 1   !nstep,dtime (4000, 0.1)
+$INTERVAL_DATA: 1 100   !nstep,dtime
 $.........................................FUNCTION DATA
 FUNCTION,NEW_FUNCTION
 F_NUMBER,1,1
-1 0.0 51.0 50.0 4.4! tipo,tinicial,tfinal,tconstante,factor
+    1 0.0 1001 1000  3 ! tipo,tinicial,tfinal,tconstante,factor
 END_FUNCTION
 $.........................................LOAD DATA
 $                                         for the first interval
 LOAD,NEW_LOAD
-$ PRINT_LOADS
+$
 END_LOAD_DATA
 $.........................................BOUNDARY DATA
 $                                         for the first interval
@@ -72,9 +87,18 @@ $                                         for the first interval
 STRATEGY,NEW_STRATEGY
  ALGORITHM,UPDATE,2
  LINESEARCH=ON
- CONVERGENCE,TOTAL,200,0.001
+ CONVERGENCE,TOTAL,200, 0.01 !1.0e-7
  OUTPUT,DISPLACEMENTS,1,0
-$ OUTPUT,G_STRESSES,1,0
+ OUTPUT,N_STRESSES,1,0
+ OUTPUT,N_PRI,1,0
+ OUTPUT,N_DEFORMATIONS,1,0
+ OUTPUT,N_DEP,1,0
+$ OUTPUT,N_INTERNAL,1,0
+ OUTPUT,G_STRESSES,1,0
+ OUTPUT,G_PRI,1,0
+ OUTPUT,G_INT,1,0
+$ OUTPUT,ALL,1,0
+$ STEPPING,NEWMARK
 $ OUTPUT,N_STRESSES,1,0
 $ OUTPUT,G_INTERNAL,1,0
 $ OUTPUT,N_INTERNAL,1,0
@@ -83,8 +107,11 @@ $ OUTPUT,ALL,1,0
 $
   PLOT
 $   Vertical displacement
-$    X:TIME
-$    Y:DISPLACEMENT,Y,1
+$    X:DISPLACEMENT,Y,7
+$    Y:DISPLACEMENT,Z,7
+$   Stress
+$    X:DISPLACEMENT,X,7
+$    Y:STRESS,XX,1,1
 $  Vertical reaction
 $   X:TIME
 $   Y:FORCE,Y,17840
@@ -101,5 +128,3 @@ END_STRATREGY_DATA
 END_INTERVAL_DATA
 $-----------------------------------------END 1 INTERVAL DATA
 STOP
-
-

@@ -9,7 +9,7 @@ class Vulcan():
         self.ubicacion_casos = ubicacion_casos
 
 ######################################################################################################################
-    def Biaxial_Demiray(self,a,b,penal = 1000,verbose = True, fuerzas_flag = False):
+    def Biaxial_Demiray(self,a,b,penal = 1000,save_step = None ,verbose = True, fuerzas_flag = False):
         print('##### Modelo Demiray ####')
         ubicacion = self.ubicacion_casos + 'Biaxial_Demiray/'
     
@@ -27,19 +27,19 @@ class Vulcan():
         disp, stress = get_results(caso1.pathToPos())
 
         print('Numero de pasos simulados: ', len(disp))
-        gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        if save_step == None:
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        else: 
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp[save_step,:,:])
         print('Simulacion Finalizada')
 
         if verbose == True:
             print('J global: ', gradientes_deformacion [1] )
-
-
         dat_out = Nombre_salida + '.dat' 
         fix_out = Nombre_salida + '.fix'
         geo_out = Nombre_salida + '.geo'
 
         Borrar_file([dat_out,fix_out,geo_out])
-
         if fuerzas_flag == True:
             Fuerzas = Resultados_vulcan(caso1.pathToPos()).Fuerzas()
             return disp, stress, gradientes_deformacion, file_msh, Fuerzas
@@ -48,7 +48,7 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Demiray_20(self,a,b,penal = 1000,verbose = True, fuerzas_flag = False):
+    def Biaxial_Demiray_20(self,a,b,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False):
         print('##### Modelo Demiray ####')
         ubicacion = self.ubicacion_casos + 'Biaxial_Demiray20/'
     
@@ -65,7 +65,13 @@ class Vulcan():
         caso1.run(parametros)
         disp, stress = get_results(caso1.pathToPos())
         print('Numero de pasos simulados: ', len(disp))
-        gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+
+        if save_step != None and disp.shape[0] == 1501 : 
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp[save_step,:,:])
+
+        else:
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+
         print('Simulacion Finalizada')
 
         if verbose == True:
@@ -86,7 +92,7 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Yeoh_20(self,a,b,c,penal = 1000,verbose = True, fuerzas_flag = False):
+    def Biaxial_Yeoh_20(self,a,b,c,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False):
         print('####### Modelo Yeoh #######')
 
 
@@ -108,7 +114,13 @@ class Vulcan():
         caso1.run(parametros)
         disp, stress = get_results(caso1.pathToPos())
         print('Numero de pasos simulados: ', len(disp))
-        gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        
+        if save_step != None and disp.shape[0] == 1501 : 
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp[save_step,:,:])
+
+        else:
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+
         print('Simulacion Finalizada')
 
         if verbose == True:
@@ -128,7 +140,7 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Yeoh(self,a,b,c,penal = 1000,verbose = True, fuerzas_flag = False):
+    def Biaxial_Yeoh(self,a,b,c,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False):
         print('####### Modelo Yeoh #######')
 
 
@@ -150,7 +162,10 @@ class Vulcan():
         caso1.run(parametros)
         disp, stress = get_results(caso1.pathToPos())
         print('Numero de pasos simulados: ', len(disp))
-        gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        if save_step == None:
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+        else: 
+            gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp[save_step,:,:])
         print('Simulacion Finalizada')
 
         if verbose == True:
@@ -239,12 +254,8 @@ class Vulcan():
         Borrar_file([dat_out,fix_out,geo_out])
 
 
-        D = np.zeros([3*len(disp[0]),len(disp)])
-        ite = 0
-
-        for jt, j in enumerate(disp):
-            D[:,ite] = j.reshape(-1)
-            ite = ite +1
+        x,y,z = disp.shape
+        D = disp.transpose((1,2,0)).reshape((y*z,x)) 
 
         T = np.zeros([6*len(disp[0]),len(disp)])
         ite = 0

@@ -65,7 +65,7 @@ INTERVAL_DATA,1000,1.0
 $.........................................FUNCTION DATA
 FUNCTION,NEW_FUNCTION
  F_NUMBER,1,1
-  1, 0.0, 1000.1, 1000.0, 2 !tipo,tinicial,tfinal,tconstante,factor    
+  1, 0.0, 1000.1, 1000.0, 5.0 !tipo,tinicial,tfinal,tconstante,factor    
 END_FUNCTION
 $.........................................LOAD DATA
 LOAD,NEW_LOAD                                                         

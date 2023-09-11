@@ -4,27 +4,20 @@ from launch.ReduccionOrden import *
 import numpy as np
 import matplotlib.pyplot as plt
 
+Direcciones_fom = ['Resultados/Biaxial_Demiray_20/','Resultados/Biaxial_Yeoh_20/'] 
+Direccion_ROM  = 'SVD/Biaxial4/'
 
-Direcciones_fom = ['Resultados/Biaxial_Demiray/','Resultados/Biaxial_Yeoh/', 'Resultados/Biaxial_Mooney/' ] 
-Direccion_ROM  = 'SVD/Biaxial2/'
+nombres_variables_fom  = [[ 'Desplazamientos_Demiray20_Biaxial_',
+                          'Gradientes_Demiray20_Biaxial_',
+                          'Tensiones_Demiray20_Biaxial_'],
 
-
-nombres_variables_fom  = [[ 'Desplazamientos_Demiray_biaxial_',
-                          'Gradientes_Demiray_biaxial_',
-                          'Tensiones_Demiray_biaxial_'],
-
-                          ['Desplazamientos_Yeoh_Biaxial_',
-                          'Gradientes_Yeoh_Biaxial_',
-                          'Tensiones_Yeoh_Biaxial_'],
-
-                          ['Desplazamientos_MOON_Biaxial_',
-                          'Gradientes_MOON_Biaxial_',
-                          'Tensiones_MOON_Biaxial_']
+                          ['Desplazamientos_Yeoh20_Biaxial_',
+                          'Gradientes_Yeoh20_Biaxial_',
+                          'Tensiones_Yeoh20_Biaxial_']
 ]
 
-variables_rom = ['Desplazmaientos', 'Gradientes','Tensiones' ]
-
-#info_FOM = [Direccion_fom,nombre_fom]
+#variables_rom = ['Desplazmaientos', 'Gradientes','Tensiones' ]
+variables_rom = ['Desplazmaientos']
 
 infos_FOM = []
 for it,dir_fom in enumerate(Direcciones_fom):
@@ -49,7 +42,7 @@ for it, info_FOM in enumerate(Datos_unir):
 
     for i in info_FOM[2:]:
         MS = np.concatenate((MS,Armado_MSnaptchots(i,Variable_str)),axis =1)
-        Mean = np.mean(MS,axis = 1)
+        
         #print('media')
         #print(Mean.shape)
         #des = np.std(MS, axis = 1)
@@ -60,15 +53,15 @@ for it, info_FOM in enumerate(Datos_unir):
 
         #print('desviacion')
         #print(des.shape)
-
-        for i in range(len(MS[0,:])):
-            MS[:,i] = MS[:,i] - Mean
-            #MS[:,i] = MS[:,i] / des
+    Mean = np.mean(MS,axis = 1)
+    for i in range(len(MS[0,:])):
+        MS[:,i] = MS[:,i] - Mean
+        #MS[:,i] = MS[:,i] / des
 
     nombre_media = Direccion_ROM + 'Mean_' +Variable_str + '.txt'
     np.savetxt(nombre_media,Mean)
     print(MS.shape)
-    SVD_Modos_dask(MS,[Direccion_ROM,Variable_str],Grafico_r_variable = False)
+    SVD_Modos_dask(MS,[Direccion_ROM,Variable_str],Grafico_r_variable = False, r = 8)
 
     del MS
 

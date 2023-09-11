@@ -1,4 +1,4 @@
-from launch.gradientes import Gradientes_nodales_Vulcan
+#from launch.gradientes import Gradientes_nodales_Vulcan
 from launch.vulcan_handler import VulcanHandler
 from intervul.readpos import VulcanPosMesh
 from launch.Funciones import *
@@ -10,12 +10,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import interpolate
 from launch.Energias import *
+from energia_iso import *
 
 
-Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_demiray/'
-Nombre_salida = 'Test_energy'
+#Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_demiray/'
+#Nombre_salida = 'Test_energy'
 
-param = {'Cons1': 30.0E-3,'Cons2': 3.77,'Penal': 30 }
+#param = {'Cons1': 30.0E-3,'Cons2': 3.77,'Penal': 30 }
+
+Ubicacion_caso = '/home/nicolas/Escritorio/launch_cases/Test/Test_energy/Cubo_Yeoh/'
+Nombre_salida = 'Test_energy_yeoh'
+
+a,b,c = 0.018412852746797336, 0.04638435127243134, 0.004321486477620494
+
+param = {'Cons1': a,'Cons2': b,'Cons3': c,'Penal': 10000*a }
+
+
 
 
 
@@ -27,56 +37,21 @@ disp, stress = get_results(caso1.pathToPos())
 fuerzas = Resultados_vulcan(caso1.pathToPos()).Fuerzas()
 print('Numero de pasos simulados: ', len(disp))
 gradientes_deformacion = Gradientes_nodales_Vulcan(file_msh,disp)
+Energia_deformacion = Energia_Total(file_msh,disp,30.0E-3,3.77)
+print('Energía Interna')
+print(Energia_deformacion[-1])
+
 print('J global: ', gradientes_deformacion [1] )
-
-
 dat_out = Nombre_salida + '.dat' 
 fix_out = Nombre_salida + '.fix'
 geo_out = Nombre_salida + '.geo'
 
 Borrar_file([dat_out,fix_out,geo_out])
 
-####################################### Fuerza Externa #######################################
-
-
-#print(disp[-1,:,:])
-
-mesh = pv.read(file_msh)
-mesh.clear_data()
-
-energia  =Energia_deformacion(gradientes_deformacion[0][:,-1]).Demiray(30.0E-3,3.77)
-
-COO = mesh.points
-energia_cell = []
-#Volume_cell = []
-for it, i in enumerate(mesh.cells_dict[12]):
-    nodos = COO[i]
-    energia_cell.append(np.mean(energia[i]))
-
-
-
-#################################################### Volumen celdas ##################################################################
-
-mesh.points +=  disp[-1,:,:]
-#mesh.plot()
-
-volumenes_cell  = []
-for  i in mesh.compute_cell_sizes()["Volume"]:
-    if  i != 0 :
-        volumenes_cell.append(i)
-
-
-energia_cell = np.array(energia_cell)#.reshape((-1,1))
-volumenes_cell = np.array(volumenes_cell)#.reshape((1,-1))
-
-print('Energía de Deformacion')
-#print(volumenes_cell)
-print(np.dot(volumenes_cell, energia_cell))
-# Cambiar el volumen orgiinal al actual
 
 ########################################################## Energia Externa ##########################################################
 
-
+mesh = pv.read(file_msh)
 
 Punto_extremo1 = [] # Extremo 1 es X
 Punto_extremo2 = [] # Extremo 2 es Y
@@ -101,7 +76,7 @@ desplazamientos1 = disp[:,Punto_extremo1[0],-1]
 #print(desplazamientos1)
 #print(Fuerza_extremo1 )
 ############################################################### Area Bajo la curva ################################################
-
+ 
 
 
 n = 3000

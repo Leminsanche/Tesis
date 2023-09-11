@@ -53,25 +53,31 @@ def get_results(posFile): #posFile
     
 def save_result(nombre_T ,nombre_D,nombre_G,Direccion,desplazamientos,estres,gradientes):
   
-    D = np.zeros([3*len(desplazamientos[0][0]),len(desplazamientos[0]) * len(desplazamientos)])
-    S = np.zeros([6*len(estres[0][0]),len(estres[0]) * len(estres)])
+    # D = np.zeros([3*len(desplazamientos[0][0]),len(desplazamientos[0]) * len(desplazamientos)])
+    #S = np.zeros([6*len(estres[0][0]),len(estres[0]) * len(estres)])
 
        #S = np.zeros([len(estres[0]),len(estres)])
-    print(D.shape)
-    ite = 0
-    for it,i in enumerate(desplazamientos):
-        for jt, j in enumerate(i):
-            D[:,ite] = j.reshape(-1)
-            ite = ite +1
+    # print(D.shape)
+    # ite = 0
+    # for it,i in enumerate(desplazamientos):
+    #     for jt, j in enumerate(i):
+    #         D[:,ite] = j.reshape(-1)
+    #         ite = ite +1
 
+    x,y,z = desplazamientos.shape
+    D = desplazamientos.transpose((1,2,0)).reshape((y*z,x))
+    #print(D2 == D)
+
+    x,y,z = estres.shape
+    S = estres.transpose((1,2,0)).reshape((y*z,x))
    
-    ite = 0
-    for it,i in enumerate(estres):
-        for jt, j in enumerate(i):
-            S[:,ite] = j.reshape(-1)
-            ite = ite +1
+    # ite = 0
+    # for it,i in enumerate(estres):
+    #     for jt, j in enumerate(i):
+    #         S[:,ite] = j.reshape(-1)
+    #         ite = ite +1
             
-    grad = gradientes[0][0]
+    # print(S == S2)
     #for G in gradientes[1:]:
     #    grad = np.concatenate((grad,G),axis =1) 
 
@@ -79,7 +85,7 @@ def save_result(nombre_T ,nombre_D,nombre_G,Direccion,desplazamientos,estres,gra
     file_desplazamientos = Direccion + nombre_D
     file_gradientes = Direccion + nombre_G
     np.savez_compressed(file_desplazamientos,D)
-    np.savez_compressed(file_gradientes,grad)
+    np.savez_compressed(file_gradientes,gradientes)
     np.savez_compressed(file_tensiones,S)
     print('Desplazamientos, Tensiones y gradiente de deformacion, guardadas en resultados')
    

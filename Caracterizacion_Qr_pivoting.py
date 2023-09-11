@@ -12,7 +12,7 @@ from pymoo.optimize import minimize
 from pymoo.algorithms.soo.nonconvex.cmaes import CMAES
 import matplotlib.pyplot as plt
 from scipy import interpolate
-
+from scipy.integrate import trapz, simps
 
 
 class MyProblem(ElementwiseProblem):
@@ -85,6 +85,7 @@ def Energia_Ml_Mooney(C,Gradiente_recons):
 if __name__ == '__main__':
     ########################################################## Simulacion Realizada ##########################################################
     a,b,c = random.uniform(0.1,0.9) , random.uniform(0,0) , random.uniform(3,14)
+    a,c = 0.27472632, 8.94008299
     #a,b,c = random.uniform(0.001,0.03) , random.uniform(0.002,0.08) , random.uniform(0.002,0.01)
     desplazamientos, tensiones, gradientes, malla, fuerzas = Vulcan().Biaxial_Demiray(a,c,penal = 10000, fuerzas_flag = True)
     x,y,z = desplazamientos.shape
@@ -138,33 +139,33 @@ if __name__ == '__main__':
     desplazamientos2 = desplazamientos[:,Punto_extremo2[int(len(Punto_extremo2)/2-1)],1]
 
     ############################################################### Area Bajo la curva ################################################
+    Energia_x = simps(Fuerza_extremo1,desplazamientos1)
+    Energia_y = simps(Fuerza_extremo2,desplazamientos2)
+    Energia_Externa = Energia_x + Energia_y
+    # n = 3000
+    # Datos = [[desplazamientos1,Fuerza_extremo1],[desplazamientos2,Fuerza_extremo2] ]
+    # #Datos = [[desplazamientos1,Fuerza_extremo1]]
 
-
-
-    n = 3000
-    Datos = [[desplazamientos1,Fuerza_extremo1],[desplazamientos2,Fuerza_extremo2] ]
-    #Datos = [[desplazamientos1,Fuerza_extremo1]]
-
-    Landas = []
-    Fuerzas = []
-    for i in Datos:    
-        Fuerza = i[1]
-        landa = i[0]
-        mini = min(landa)
-        maxi = max(landa)
+    # Landas = []
+    # Fuerzas = []
+    # for i in Datos:    
+    #     Fuerza = i[1]
+    #     landa = i[0]
+    #     mini = min(landa)
+    #     maxi = max(landa)
         
-        X_n = np.linspace(mini,maxi,n)
-        f = interpolate.interp1d(landa, Fuerza)
-        Y_n = f(X_n)
+    #     X_n = np.linspace(mini,maxi,n)
+    #     f = interpolate.interp1d(landa, Fuerza)
+    #     Y_n = f(X_n)
         
-        Landas.append(X_n)
-        Fuerzas.append(Y_n)
+    #     Landas.append(X_n)
+    #     Fuerzas.append(Y_n)
         
-        #plt.plot(landa,Fuerza)
-    #plt.grid()
+    #     #plt.plot(landa,Fuerza)
+    # #plt.grid()
 
     print('Energía Externa')
-    Energia_Externa = Trapecio_discreto(Landas[0],Fuerzas[0])*2
+    #Energia_Externa = Trapecio_discreto(Landas[0],Fuerzas[0])*2
     print(Energia_Externa)
 
     fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -225,7 +226,9 @@ res = minimize(problem,
 print("Best solution found in GA: \nX = %s\nF = %s" % (res.X, res.F))
 coef_GA  = res.X
 
-algorithm = CMAES(x0=np.array((random.uniform(0.1,0.9) , random.uniform(3,14))))
+# algorithm = CMAES(x0=np.array((random.uniform(0.1,0.9) , random.uniform(3,14))))
+algorithm = CMAES(x0= coef_GA)
+
 
 res = minimize(problem,
                algorithm,
@@ -237,8 +240,22 @@ coef_CMAES  = res.X
 
 
 
+print('################################### Constantes ################################### ')
+
+
+print('Coeficientes Originales')
+print(a,c)
+print('\n')
+print('Coeficientes GA')
+print(coef_GA)
+print('\n')
+print('Coeficientes GMAES')
+print(coef_CMAES)
+
+print('################################### Energia ################################### ')
+
 print('Energía Externa')
-print(Trapecio_discreto(Landas[0],Fuerzas[0])*2)
+print(Energia_Externa)
 print('\n')
 print('Energía GA')
 energia_recons = Energia_deformacion(ROM_F).Demiray(coef_GA [0],coef_GA[1])  

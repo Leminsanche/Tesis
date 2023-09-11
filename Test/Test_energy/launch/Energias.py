@@ -11,7 +11,10 @@ class Energia_deformacion():
         
         grad_T  = np.moveaxis(self.gradiente,-1,-2) 
         C = np.matmul(grad_T,self.gradiente)
-        return C
+        J = np.power(np.linalg.det(self.gradiente), (-2/3))
+        #print(J)
+        C_iso  = C[:] * J[:,np.newaxis,np.newaxis] 
+        return C_iso
     
     def Invariantes(self):
         C = self.Cauchy_green_left()
