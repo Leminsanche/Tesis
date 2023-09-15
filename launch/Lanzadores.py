@@ -9,11 +9,11 @@ class Vulcan():
         self.ubicacion_casos = ubicacion_casos
 
 ######################################################################################################################
-    def Biaxial_Demiray(self,a,b,penal = 1000,save_step = None ,verbose = True, fuerzas_flag = False):
+    def Biaxial_Demiray(self,a,b,penal = 1000,save_step = None ,verbose = True, fuerzas_flag = False, Nombre_out ='Demiray_test_ld'):
         print('##### Modelo Demiray ####')
         ubicacion = self.ubicacion_casos + 'Biaxial_Demiray/'
     
-        Nombre_salida = 'Demiray_test'    
+        Nombre_salida = Nombre_out    
         parametros = {'Cons1': a,'Cons2': b,'Penal': a*penal } 
         dat, geo, fix, file_msh = files_vulcan(ubicacion)
 
@@ -48,11 +48,11 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Demiray_20(self,a,b,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False):
+    def Biaxial_Demiray_20(self,a,b,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False, Nombre_out ='Biaxial_Demiray_20'):
         print('##### Modelo Demiray ####')
         ubicacion = self.ubicacion_casos + 'Biaxial_Demiray20/'
     
-        Nombre_salida = 'Demiray_test'    
+        Nombre_salida = Nombre_out    
         parametros = {'Cons1': a,'Cons2': b,'Penal': a*penal } 
         dat, geo, fix, file_msh = files_vulcan(ubicacion)
 
@@ -92,13 +92,13 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Yeoh_20(self,a,b,c,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False):
+    def Biaxial_Yeoh_20(self,a,b,c,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False,Nombre_out = 'Yeoh_test_20'):
         print('####### Modelo Yeoh #######')
 
 
         ubicacion = self.ubicacion_casos + 'Biaxial_Yeoh20/'
     
-        Nombre_salida = 'Yeoh_test'    
+        Nombre_salida = Nombre_out
         parametros = {'Cons1': a,'Cons2': b,'Cons3': c,'Penal': penal*a }
         dat, geo, fix, file_msh = files_vulcan(ubicacion)
 
@@ -140,13 +140,13 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Yeoh(self,a,b,c,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False):
+    def Biaxial_Yeoh(self,a,b,c,penal = 1000,save_step = None,verbose = True, fuerzas_flag = False, Nombre_out ='Yeoh_test_ld'):
         print('####### Modelo Yeoh #######')
 
 
         ubicacion = self.ubicacion_casos + 'Biaxial_Yeoh/'
     
-        Nombre_salida = 'Yeoh_test'    
+        Nombre_salida = Nombre_out
         parametros = {'Cons1': a,'Cons2': b,'Cons3': c,'Penal': penal*a }
         dat, geo, fix, file_msh = files_vulcan(ubicacion)
 
@@ -185,13 +185,13 @@ class Vulcan():
         return disp, stress, gradientes_deformacion, file_msh
     
 ######################################################################################################################
-    def Biaxial_Mooney(self,a,b,c,penal = 10,verbose = True, fuerzas_flag = False):
+    def Biaxial_Mooney(self,a,b,c,penal = 10,verbose = True, fuerzas_flag = False , Nombre_out = 'Mooney_test' ):
         print('####### Modelo Mooney Rivlin #######')
 
 
         ubicacion = self.ubicacion_casos + 'Biaxial_Mooney/'
     
-        Nombre_salida = 'Mooney_test'    
+        Nombre_salida = Nombre_out
         parametros = {'Cons1': a,'Cons2': b,'Cons3': c,'Penal': penal*a }
         dat, geo, fix, file_msh = files_vulcan(ubicacion)
 

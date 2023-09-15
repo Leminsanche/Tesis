@@ -13,6 +13,15 @@ class Energia_deformacion():
         C = np.matmul(grad_T,self.gradiente)
         return C
     
+    def Cauchy_green_left_ISO(self):
+        
+        grad_T  = np.moveaxis(self.gradiente,-1,-2) 
+        C = np.matmul(grad_T,self.gradiente)
+        J = np.power(np.linalg.det(self.gradiente), (-2/3))
+        C_iso  = C[:] * J[:,np.newaxis,np.newaxis] 
+        return C_iso
+
+    
     def Invariantes(self):
         C = self.Cauchy_green_left()
         Invariantes = np.ones((len(C),3))
@@ -24,6 +33,19 @@ class Energia_deformacion():
             Invariantes[it,:] = np.array((I1,I2,I3))
 
         return Invariantes
+    
+    def Invariantes_ISO(self):
+        C = self.Cauchy_green_left_ISO()
+        Invariantes = np.ones((len(C),3))
+        for it, c in enumerate(C):
+            I1 = np.trace(c)
+            I2 = 0.5 * ( np.trace(c)**2 - np.trace(np.matmul(c,c)) )
+            I3 = np.linalg.det(c)
+
+            Invariantes[it,:] = np.array((I1,I2,I3))
+
+        return Invariantes
+
     
     def Yeoh(self,c1,c2,c3):
         invariantes  = self.Invariantes()
@@ -59,3 +81,31 @@ class Energia_deformacion():
             energy[it]  =  energia
     
         return energy
+    
+
+    def Holza2(self,mu, k1 ,k2, kappa1, kappa2, ang):
+
+        angulo  = ang * np.pi/180
+   
+        C_iso = self.Cauchy_green_left_ISO()
+        Invariantes = self.Invariantes_ISO()
+        M4 = np.array([0 , np.sin(angulo), np.cos(angulo) ])
+        M6 = np.array([0 , -np.sin(angulo), np.cos(angulo) ])
+        Mn = np.array([1, 0, 0 ])
+
+        M4xM4 = np.outer(M4,M4)
+        M6xM6 = np.outer(M6,M6)
+        MnxMn = np.outer(Mn,Mn)
+
+        In = np.einsum('...jk,jk->...',C_iso,MnxMn)
+        I4 = np.einsum('...jk,jk->...',C_iso,M4xM4)
+        I6 = np.einsum('...jk,jk->...',C_iso,M6xM6)
+
+        A = 2* kappa2 * kappa1
+        B = 2*kappa2*(1-2*kappa1)
+
+        E4 = A*Invariantes[:,0] + B*I4 + (1-3*A-B)*In -1
+        E6 = A*Invariantes[:,0] + B*I6 + (1-3*A-B)*In -1
+        psi = (mu*0.5)*(Invariantes[:,0] - 3)+ (k1/(2*k2))* ( (np.e**(k2*E4**2)-1)+(np.e**(k2*E6**2)-1) )
+
+        return psi
